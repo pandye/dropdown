@@ -28,6 +28,7 @@ def state_ajax(request):
 def city_ajax(request):
     if request.POST and request.is_ajax():
     	s_id = request.POST.get('state_id')
+	print s_id
     	city = City.objects.filter(state=s_id)
 	print city
     	city_dict = {}
