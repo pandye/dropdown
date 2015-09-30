@@ -16,6 +16,7 @@ $(".country").change(function(){
 
       success : function(data){
 	      $(".state").empty();
+	      $(".city").empty().append('<option>Select City</option>')
 	      $.each(data, function(key, value){
 		  $(".state").append('<option value=" ' +key+' ">'+ value +'</option>');
 		});
