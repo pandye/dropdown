@@ -7,10 +7,16 @@ import json
 
 def dropdown(request):
     form = DropDownForm()
-    #country = Country.objects.all()
-    #state = State.objects.all()
-    #city = City.objects.none()
-    return render(request, "dropdown.html", {'form':form}) #{'country': country, 'state':state, 'city':city})
+    return render(request, "dropdown.html", {'form':form})
+
+    """ 'Without using ModelForm'
+
+    country = Country.objects.all()
+    state = State.objects.all()
+    city = City.objects.none()
+    return render(request, "dropdown.html", {'country': country, 'state':state, 'city':city})
+ 
+    """
 
 
 def state_ajax(request):
@@ -24,7 +30,7 @@ def state_ajax(request):
         for state in state:
             state_dict[state.id] = state.name
 	print state_dict, json.dumps(state_dict)
-        return JsonResponse(state_dict, content_type="application/json")
+        return JsonResponse(state_dict, content_type="application/json") #shortcut for json.dumps
 
 def city_ajax(request):
     if request.POST and request.is_ajax():
