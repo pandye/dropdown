@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block jquery %}
+
+$("#id_country").change(function(){
+  console.log('works');
+  $.ajax({
+    url : "{% url 'state_ajax' %}",
+    type : "POST",
+    data : {
+      csrfmiddlewaretoken : "{{ csrf_token }}",
+      country_id : $("#id_country").val(),
+	  },
+      
+    dataType : 'json', 
+
+    success : function(data){
+	    $("#id_state").empty();
+	    $("#id_city").empty().append('<option>Select City</option>')
+	    $.each(data, function(key, value){
+		    $("#id_state").append('<option value=" ' +key+' ">'+ value +'</option>');
+		  });
+
+		  $("#id_state").change(function(){
+		    console.log('works');
+		    $.ajax({
+          url : "{% url 'city_ajax' %}",
+		      type : "POST",
+		      data : {
+			      csrfmiddlewaretoken : "{{ csrf_token }}",
+			      state_id : $("#id_state").val(),
+			    },
+		      
+		      dataType : 'json', 
+
+		      success : function(data){
+            $("#id_city").empty();
+			      $.each(data, function(key, value){
+				    $("#id_city").append('<option value=" '+key+' ">'+ value +'</option>');
+				  });
+			      console.log(data);
+			},
+		      error : function(){
+			      console.log(arguments);
+			},
+		  });
+		});
+
+	},
+      error : function(){
+        console.log(arguments);
+	},
+  });
+});
+
+
+
+{% endblock %}
+
+{% block comment %}
+<form id="dropdownform" method="post" action="">
+  <div class="col-md-12">
+    <div class="col-md-4">
+      <label>Country:</label>
+        <select name="c_name" id="c_id" class="country">
+          <option selected disabled>Select Country</option>
+            {% for c in country %}
+              <option value="{{ c.id }}">{{ c }}</option>
+            {% endfor %}
+        </select>
+    </div>
+   
+    <div class="col-md-4">
+      <label>State:</label>
+        <select name="s_name" id="s_id" class="state">
+          <option selected disabled>Select State</option>
+            {% for s in state %}
+              <option value="{{ s.id }}">{{ s }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-4">
+      <label>City:</label>
+        <select name="ci_name" id="ci_id" class="city">
+          <option selected disabled>Select City</option>
+            {% for ci in city %}
+              <option value="{{ ci.id }}">{{ ci }}</option>
+            {% endfor %}
+        </select>
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+
+
+
+
+
+{% block content %}
+  <form name="dropdownform" method="post" action="">{% csrf_token %}
+    <div class="col-md-12">
+      <div class="col-md-4">
+        {{ form.country.label }}{{form.country}}
+      </div> 
+      <div class="col-md-4">
+        {{ form.state.label }}{{form.state}}
+      </div>  
+      <div class="col-md-4">
+        {{ form.city.label }}{{form.city}}
+      </div>
+    </div>
+ </form>
+{% endblock %}
+
