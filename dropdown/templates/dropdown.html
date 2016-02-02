@@ -1,58 +1,41 @@
 {% extends "base.html" %}
+
 {% block jquery %}
 
 $("#id_country").change(function(){
   console.log('works');
   $.ajax({
+
     url : "{% url 'state_ajax' %}",
     type : "POST",
     data : {
       csrfmiddlewaretoken : "{{ csrf_token }}",
       country_id : $("#id_country").val(),
-	  },
+      },
       
     dataType : 'json', 
 
     success : function(data){
-	    $("#id_state").empty();
-	    $("#id_city").empty().append('<option>Select City</option>')
-	    $.each(data, function(key, value){
-		    $("#id_state").append('<option value=" ' +key+' ">'+ value +'</option>');
-		  });
 
-		  $("#id_state").change(function(){
-		    console.log('works');
-		    $.ajax({
-          url : "{% url 'city_ajax' %}",
-		      type : "POST",
-		      data : {
-			      csrfmiddlewaretoken : "{{ csrf_token }}",
-			      state_id : $("#id_state").val(),
-			    },
-		      
-		      dataType : 'json', 
+      $("#id_state").empty();      
+      $.each(data.state_dict, function(key, value){
+        $("#id_state").append('<option value=" ' +key+' ">'+ value +'</option>');
+      });
 
-		      success : function(data){
-            $("#id_city").empty();
-			      $.each(data, function(key, value){
-				    $("#id_city").append('<option value=" '+key+' ">'+ value +'</option>');
-				  });
-			      console.log(data);
-			},
-		      error : function(){
-			      console.log(arguments);
-			},
-		  });
-		});
+      $("#id_city").empty();
+      $.each(data.city_dict, function(key, value){
+        $("#id_city").append('<option value=" '+key+' ">'+ value +'</option>');
+      });
 
-	},
-      error : function(){
-        console.log(arguments);
-	},
+    },
+
+    error : function(){
+      console.log(arguments);
+
+    },
+
   });
 });
-
-
 
 {% endblock %}
 

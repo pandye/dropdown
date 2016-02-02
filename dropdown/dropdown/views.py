@@ -23,22 +23,27 @@ def state_ajax(request):
     if request.POST and request.is_ajax():
         print "ajax"
         c_id = request.POST.get('country_id')
-        print id
         state = State.objects.filter(country=c_id)
-	print state
-        state_dict = {}
-        for state in state:
-            state_dict[state.id] = state.name
-	print state_dict, json.dumps(state_dict)
-        return JsonResponse(state_dict, content_type="application/json") #shortcut for json.dumps
 
-def city_ajax(request):
-    if request.POST and request.is_ajax():
-        s_id = request.POST.get('state_id')
-	print s_id
-        city = City.objects.filter(state=s_id)
-	print city
+        for s in state:
+            city = s.city_set.all()
+            print "city", city
+
+
+        state_dict = {}
+        for s in state:
+            state_dict[s.id] = s.name
+        
         city_dict = {}
-        for city in city:
-            city_dict[city.id] = city.name
-        return HttpResponse(json.dumps(city_dict), content_type="application/json")  
+        print city
+        for c in city:
+            city_dict[c.id] = c.name
+
+
+        data = json.dumps({
+                'state_dict': state_dict,
+                'city_dict': city_dict,
+            })
+
+        print data
+        return HttpResponse(data, content_type="application/json")
